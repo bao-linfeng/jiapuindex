@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 62.5%;
+  color: #333;
+  background: #EFF1F5;
+}
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 1.4rem;
+}
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+.marginR20{
+  margin-right: 2rem;
+}
+
+a{
+  text-decoration: none;
+}
+i{
+  font-style: normal;
+}
+/* 消息提示 */
+.msg_wrap{
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  background: #67c23a;
+  padding: 5px 15px;
+  border-radius: 3px;
+  text-align: center;
+  color: #333;
+  min-width: 80px;
+  z-index: 10000;
+}
+.msg_wrap_ok{
+  background: #f0f9eb;
+  color: #67c23a;
+}
+.msg_wrap_warn{
+  background:#fdf6ec;
+  color: #e6a23c;
+}
+.row-blue{
+  color: #358BCD;
+}
+.el-table .cell {
+  word-break: normal !important;
+}
