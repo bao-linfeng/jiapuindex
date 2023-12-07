@@ -370,6 +370,9 @@ const lang = {
         '未递交': '未递交',
         '单拍':'单拍',
         '双拍': '双拍',
+        '页, 总adj影像数': '页, 总adj影像数',
+        '页影像, 总adj影像数': '页影像, 总adj影像数',
+        'adj影像页': 'adj影像页',
     },
     'en': {
         '家谱索引': 'Genealogy index',
@@ -738,6 +741,9 @@ const lang = {
         '未递交': 'To be submitted',
         '单拍':'Single Page',
         '双拍': 'Double Page',
+        '页, 总adj影像数': 'Page, Total adj Images ',
+        '页影像, 总adj影像数': 'Page Image, Total adj Images ',
+        'adj影像页': 'adj Images',
     }
 }
 

@@ -95,7 +95,9 @@ const limit = ref(50);
 const total = ref(0);
 const currentPages = ref(0);
 const currentImages = ref(0);
+const currentADJImages = ref(0);
 const totalImages = ref(0);
+const ADJImageCount = ref(0);
 const loading = ref(false);
 /** 
  * 分页页码切换 
@@ -150,13 +152,14 @@ const getDataList = async () => {
     
     loading.value = false;
     if(result.status == 200){
-        let c1 = 0, c2 = 0;
+        let c1 = 0, c2 = 0, c3 = 0;
         tableData.value = result.result.list.map((ele) => {
             // ele.lostVolume = ele.lostVolume === 0 || ele.lostVolume === '0' ? '否' : '是';
             ele.assignProgressO = ele.assignProgress ? langData.value['已分配'] : langData.value['待分配'];
             ele.deliveryProgressO = ele.deliveryProgress === 6 ? langData.value['已完工'] : ele.deliveryProgress === 5 ? langData.value['有条件通过'] : ele.deliveryProgress === 4 ? langData.value['已打回'] : ele.deliveryProgress === 3 ? langData.value['已审核'] : ele.deliveryProgress === 2 ? langData.value['待审核'] : ele.deliveryProgress === 1 ? langData.value['未递交'] : !ele.deliveryProgress ? langData.value['未下载'] : '';
             c1 = c1 + (ele.imageCount || 0);
             c2 = c2 + 1;
+            c3 = c3 +(ele.ADJImageCount || 0);
 
             ele.imageCountO = thousands(ele.imageCount);
             ele.ADJImageCount = thousands(ele.ADJImageCount);
@@ -166,6 +169,7 @@ const getDataList = async () => {
         total.value = result.result.total;
         currentImages.value = thousands(c1);
         currentPages.value = thousands(c2);
+        currentADJImages.value = thousands(c3);
     }else{
         createMsg(result.msg);
     }
@@ -203,6 +207,7 @@ const gcListTotal = async () => {
     });
     if(result.status == 200){
         totalImages.value = thousands(result.result.imageCount);
+        ADJImageCount.value = thousands(result.result.ADJImageCount);
     }else{
         createMsg(result.msg);
     }
@@ -452,7 +457,9 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
                 downloadList.push({'name': e.substr(e.lastIndexOf('/')+1), 'url': downloadURL+'/index'+e});
             });
             console.log(downloadList);
-            zipFiles('家谱索引影像资源-'+Date.now()+'.zip', downloadList);
+            // zipFiles('家谱索引影像资源-'+Date.now()+'.zip', downloadList, () => {});
+            downloadImageZip(downloadList);
+
             arr = null;
             downloadList = null;
             selectList.value = [];
@@ -463,6 +470,30 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
     }else{
         createMsg(result.msg);
     }
+}
+
+let arr = [
+        {'name': '3014984930_1.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_1.tar.gz'},
+        {'name': '3014984930_2.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_2.tar.gz'},
+    ];
+
+function downloadImageZip(arr){
+    let i = 0, l = arr.length;
+
+    function fn(){
+        zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], () => {
+            i++;
+            if(i < l){
+                fn();
+            }else{
+                console.log(i);
+                i = null;
+                l = null;
+            }
+        });
+    }
+
+    fn();
 }
 const catalogKey = ref('');
 const handleClickAction = (row, t) => {
@@ -478,17 +509,24 @@ const handleClickAction = (row, t) => {
         GIKDownload([row.gcKey]);
     }
     if(t === 'downloadSomeGIK'){
-        if(selectList.value.length){
-            let arr = [];
-            selectList.value.forEach((ele) => {
-                arr.push(ele.gcKey);
-            });
-            GIKDownload(arr);
-            arr = null;
-            selectList.value = [];
-        }else{
-            createMsg(langData.value['请勾选需要下载GIK的谱目！']);
-        }
+        let arr = [];
+        selectList.value.forEach((ele) => {
+            arr.push(ele.gcKey);
+        });
+        GIKDownload(arr);
+        arr = null;
+        selectList.value = [];
+        // if(selectList.value.length){
+        //     let arr = [];
+        //     selectList.value.forEach((ele) => {
+        //         arr.push(ele.gcKey);
+        //     });
+        //     GIKDownload(arr);
+        //     arr = null;
+        //     selectList.value = [];
+        // }else{
+        //     createMsg(langData.value['请勾选需要下载GIK的谱目！']);
+        // }
     }
     if(t === 'downloadSomeImage'){
         if(selectList.value.length){
@@ -717,8 +755,8 @@ watch(searchMore, (nv ,ov) => {
         </main>
         <footer class="footer">
             <div class="left">
-                <p class="statistics">{{langData['当前']}} {{currentPages}} {{langData['条谱目']}}, {{currentImages}} {{langData['影像页']}}</p>
-                <p class="statistics">{{langData['合计']}} {{total}} {{langData['条谱目']}}, {{totalImages}} {{langData['影像页']}}</p>
+                <p class="statistics">{{langData['当前']}} {{currentPages}} {{langData['条谱目']}}, {{currentImages}} {{langData['影像页']}}, {{currentADJImages}} {{langData['adj影像页']}}</p>
+                <p class="statistics">{{langData['合计']}} {{total}} {{langData['条谱目']}}, {{totalImages}} {{langData['影像页']}}, {{ADJImageCount}} {{langData['adj影像页']}}</p>
             </div>
             <div class="right">
                 <el-pagination

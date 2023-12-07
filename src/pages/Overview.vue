@@ -56,6 +56,7 @@ const O = ref({});
         O.value = result.data;
         O.value['assignGCCount'] = thousands(O.value['assignGCCount']);
         O.value['assignImageCount'] = thousands(O.value['assignImageCount']);
+        O.value['assignADJImageCount'] = thousands(O.value['assignADJImageCount']);
         list.value.forEach((ele, i) => {
             ele.catalogCount = thousands(result.data[ele.c]);
             ele.imageCount = thousands(result.data[ele.i]);
@@ -113,8 +114,8 @@ onMounted(() => {
         </header>
         <main class="main">
             <div class="main-box">
-                <p v-if="orgMemberInfo.englishName == 'FS'" class="desc">{{langData['总谱目数']}} {{O.assignGCCount}} {{langData['套，总影像数']}}{{O.assignImageCount}} {{langData['页']}}</p>
-                <p v-if="orgMemberInfo.englishName != 'FS'" class="desc">{{langData['已分配']}} {{O.assignGCCount}} {{langData['本谱目，']}}{{O.assignImageCount}} {{langData['页影像']}}</p>
+                <p v-if="orgMemberInfo.englishName == 'FS'" class="desc">{{langData['总谱目数']}} {{O.assignGCCount}} {{langData['套，总影像数']}}{{O.assignImageCount}} {{langData['页, 总adj影像数']}} {{O.assignADJImageCount}}</p>
+                <p v-if="orgMemberInfo.englishName != 'FS'" class="desc">{{langData['已分配']}} {{O.assignGCCount}} {{langData['本谱目，']}}{{O.assignImageCount}} {{langData['页影像, 总adj影像数']}} {{O.assignADJImageCount}}</p>
             </div>
             <div class="main-box">
                 <div class="box-top">
