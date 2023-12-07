@@ -267,6 +267,19 @@ const gcListDownload = async () => {
     });
     const result = await index.GIKDownload({
         'gcKeyArray': gcKeyArray,
+        'userKey': userInfo.value.userKey,
+        'genealogyName': genealogyName.value,
+        'gcKey': gcKey.value,
+        'volumeKey': volumeKey.value,
+        'assignProgress': allocation.value,
+        'assignBatchKey': allocationBatch.value,
+        'deliveryProgress': deliver.value.join(','),
+        'deliveryBatchKey': deliverBatch.value,
+        'gcHasZip': gcHasZip.value,
+        'Dupbookid': Dupbookid.value,
+        'startImages': startImages.value,
+        'endImages': endImages.value,
+        'lostVolume': lostVolume.value,
     });
     loading.close();
     if(result.status == 200){
