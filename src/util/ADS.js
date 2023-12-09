@@ -186,20 +186,27 @@ function zipFiles(zipName, files, cb) {
     const zipFileOutputStream = streamSaver.createWriteStream(zipName);  
     // 创建下载文件流  
     const fileIterator = files.values();  
+
     const readableZipStream = new ZIP({  
-        async pull(ctrl) {  
-            const fileInfo = fileIterator.next();  
-            if (fileInfo.done) {//迭代终止  
-                ctrl.close();  
-            } else {  
-                const {name, url} = fileInfo.value;  
-                return fetch(url).then(res => {  
-                    ctrl.enqueue({  
-                        name,  
-                        stream: () => res.body  
-                    });  
-                })  
-            }        }    });  
+            async pull(ctrl) {  
+                const fileInfo = fileIterator.next();  
+                if (fileInfo.done) {//迭代终止  
+                    ctrl.close();  
+                } else {  
+                    const {name, url} = fileInfo.value;  
+                    return fetch(url).then(res => {  
+                        ctrl.enqueue({  
+                            name,  
+                            stream: () => res.body  
+                        });  
+                    })  
+                    .catch((e) => {
+                        console.log('请求下载');
+                    });
+                }        
+            }    
+        });  
+    
     if (window.WritableStream && readableZipStream.pipeTo) {  
         // 开始下载  
         readableZipStream  
@@ -207,6 +214,9 @@ function zipFiles(zipName, files, cb) {
             .then(() => {
                 console.log("同步下载打包结束时间：" + (Date.now() - startTime)/1000);
                 cb();
+            })
+            .catch((e) => {
+                console.log('压缩错误');
             });  
     }  
 }

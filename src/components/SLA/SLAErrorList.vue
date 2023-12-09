@@ -195,7 +195,7 @@ onMounted(() => {
         </header>
         <main class="main">
             <el-upload
-                v-if="((orgMemberInfo.englishName == 'FS' && orgMemberInfo.role == 2) || (orgMemberInfo.englishName != 'FS' && orgMemberInfo.role >= 2)) && !props.row.finishSLA && props.row.deliveryBatchStatus != 6"
+                v-if="((orgMemberInfo.englishName == 'FS' && orgMemberInfo.role == 2) || (orgMemberInfo.englishName != 'FS' && orgMemberInfo.role <= 2)) && !props.row.finishSLA && props.row.deliveryBatchStatus != 6"
                 class="inline-block"
                 :action="baseURL+'/upload'"
                 :show-file-list="false"

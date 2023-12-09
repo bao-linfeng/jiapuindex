@@ -485,16 +485,23 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
     }
 }
 
-let arr = [
-        {'name': '3014984930_1.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_1.tar.gz'},
-        {'name': '3014984930_2.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_2.tar.gz'},
-    ];
-
 function downloadImageZip(arr){
     let i = 0, l = arr.length;
 
     function fn(){
-        zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], () => {
+        try{
+            zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], () => {
+                i++;
+                if(i < l){
+                    fn();
+                }else{
+                    console.log(i);
+                    i = null;
+                    l = null;
+                }
+            });
+        }catch(e){
+            console.log(e);
             i++;
             if(i < l){
                 fn();
@@ -503,7 +510,7 @@ function downloadImageZip(arr){
                 i = null;
                 l = null;
             }
-        });
+        };
     }
 
     fn();
@@ -621,6 +628,11 @@ const handleReset = () => {
         endImages.value = '';
         lostVolume.value = '';
     }
+
+    // downloadImageZip([
+    //     {'name': '3014984930_1.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_1.tar.gz'},
+    //     {'name': '3014984930_2.tar.gz', 'url': 'https://indexserver.1jiapu.com/index/CN3065570/3014984930/3014984930_2.tar.gz'},
+    // ]);
 }
 
 watch(deliverBatch, (nv ,ov) => {
