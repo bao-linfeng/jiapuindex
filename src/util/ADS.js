@@ -202,6 +202,7 @@ function zipFiles(zipName, files, cb) {
                     })  
                     .catch((e) => {
                         console.log('请求下载');
+                        cb('error');
                     });
                 }        
             }    
@@ -213,10 +214,11 @@ function zipFiles(zipName, files, cb) {
             .pipeTo(zipFileOutputStream)  
             .then(() => {
                 console.log("同步下载打包结束时间：" + (Date.now() - startTime)/1000);
-                cb();
+                cb('success');
             })
             .catch((e) => {
                 console.log('压缩错误');
+                cb('error');
             });  
     }  
 }

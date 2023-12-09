@@ -496,8 +496,12 @@ function downloadImageZip(arr){
                 gcKey = arr[i].name.replace('.tar.gz', '');
             }
             console.log(gcKey);
-            zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], () => {
-                addDownloadImageFrequency(gcKey);
+            zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], (d) => {
+                if(d == 'error'){
+                    
+                }else{
+                    addDownloadImageFrequency(gcKey);
+                }
                 i++;
                 if(i < l){
                     fn();
