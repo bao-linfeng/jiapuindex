@@ -466,7 +466,7 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
             //         timer = null;
             //     }, i*300);
             // }) : null;
-            arr.forEach((e) => {
+            arr.forEach((e, i) => {
                 downloadList.push({'name': e.substr(e.lastIndexOf('/')+1), 'url': downloadURL+'/index'+e});
             });
             console.log(downloadList);
@@ -476,7 +476,7 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
             arr = null;
             downloadList = null;
             selectList.value = [];
-            getDataList();
+            // getDataList();
         }else{
             createMsg(langData.value['你下载影像次数已超限制!']);
         }
@@ -486,11 +486,18 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
 }
 
 function downloadImageZip(arr){
-    let i = 0, l = arr.length;
+    let i = 0, l = arr.length, gcKey = '';
 
     function fn(){
         try{
+            if(arr[i].name.lastIndexOf('_') > -1){
+                gcKey = arr[i].name.replace('.tar.gz', '').substr(0, arr[i].name.lastIndexOf('_'));
+            }else{
+                gcKey = arr[i].name.replace('.tar.gz', '');
+            }
+            console.log(gcKey);
             zipFiles(arr[i].name.replace('.tar.gz', '')+'.zip', [arr[i]], () => {
+                addDownloadImageFrequency(gcKey);
                 i++;
                 if(i < l){
                     fn();
@@ -498,6 +505,7 @@ function downloadImageZip(arr){
                     console.log(i);
                     i = null;
                     l = null;
+                    gcKey = null;
                 }
             });
         }catch(e){
@@ -509,12 +517,33 @@ function downloadImageZip(arr){
                 console.log(i);
                 i = null;
                 l = null;
+                gcKey = null;
             }
         };
     }
 
     fn();
 }
+
+const addDownloadImageFrequency = async (gcKey) => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    });
+    const result = await index.addDownloadImageFrequency({
+        'gcKeyArray': [gcKey],
+        'orgKey': orgMemberInfo.value.orgKey,
+        'userKey': userInfo.value.userKey,
+    });
+    loading.close();
+    if(result.status == 200){
+        
+    }else{
+        createMsg(result.msg);
+    }
+}
+
 const catalogKey = ref('');
 const handleClickAction = (row, t) => {
     console.log(row, t);

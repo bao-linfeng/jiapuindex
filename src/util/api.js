@@ -231,6 +231,9 @@ const index = {
   downloadImageFrequency(param){// 记录机构下载影像的次数
     return request.post('/index/downloadImageFrequency', param);
   },
+  addDownloadImageFrequency(param){//增加机构下载影像的次数（新接口下载成功后小鲍调用）
+    return request.post('/index/addDownloadImageFrequency', param);
+  },
   // 统计报表
   imageInStoreReport(param){// 影像入库报表
     return request.get('/index/imageInStoreReport', param);
