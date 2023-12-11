@@ -91,7 +91,7 @@ const lostVolumeList = ref([
  */
 const page = ref(1);
 const pages = ref(0);
-const limit = ref(50);
+const limit = ref(20);
 const total = ref(0);
 const currentPages = ref(0);
 const currentImages = ref(0);
@@ -362,6 +362,7 @@ const getOrgList = async () => {
 }
 
 const h = ref(window.innerHeight - 140);
+const jiapu = ref('');
 onMounted(() => {
     if(orgMemberInfo.value.englishName == 'FS'){
         // allocation.value = '0';
@@ -374,6 +375,7 @@ onMounted(() => {
     if(getQueryVariable('deliver')){
         deliver.value = getQueryVariable('deliver').split(',');
     }
+    jiapu.value = ref('jiapu');
     getOrgList();
     assignBatchList();
     deliveryBatchList();
@@ -476,6 +478,7 @@ const cellClassName = ({ row, column, rowIndex, columnIndex }) => {
             arr = null;
             downloadList = null;
             selectList.value = [];
+            jiapu.value.clearSelection();
             // getDataList();
         }else{
             createMsg(langData.value['你下载影像次数已超限制!']);
@@ -502,6 +505,7 @@ function downloadImageZip(arr){
                 }else{
                     addDownloadImageFrequency(gcKey);
                 }
+
                 i++;
                 if(i < l){
                     fn();
@@ -510,6 +514,7 @@ function downloadImageZip(arr){
                     i = null;
                     l = null;
                     gcKey = null;
+                    // jiapu.value.toggleRowSelection(row, false);
                 }
             });
         }catch(e){
@@ -776,6 +781,7 @@ watch(searchMore, (nv ,ov) => {
                 </el-select>
             </div>
             <el-table 
+                ref="jiapu"
                 :data="tableData" 
                 border 
                 :height="h"
