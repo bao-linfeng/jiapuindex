@@ -353,10 +353,10 @@ watch(route, () => {
                 :cell-class-name="cellClassName"
                 :header-cell-class-name="headerCellClassName"
                 @selection-change="handleSelectionChange">
-                <el-table-column prop="year" :label="langData['年份']" width="100" align="center" />
-                <el-table-column prop="orgName" :label="langData['机构名称']" width="100" align="center" />
-                <el-table-column prop="deliveryBatchO" :label="langData['交付批次']" min-width="150" align="center" />
-                <el-table-column :label="langData['备注详情']" width="130" align="center">
+                <el-table-column prop="year" :label="langData['年份']" fixed="left" width="100" align="center" />
+                <el-table-column prop="orgName" :label="langData['机构名称']" fixed="left" width="100" align="center" />
+                <el-table-column prop="deliveryBatchO" :label="langData['交付批次']" fixed="left" min-width="150" align="center" />
+                <el-table-column :label="langData['备注详情']" fixed="left" width="130" align="center">
                     <template #default="scope">
                         <el-button size="small" type="primary" @click="handleClickAction(scope.row, 'memo')">{{langData['备注']}}</el-button>
                     </template>

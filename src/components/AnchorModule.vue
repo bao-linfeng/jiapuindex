@@ -91,6 +91,7 @@ const initRoute = () => {
                 {'title': '交付报告', 'route': '/deliveryReport', 'icon': deliveryReport, 'level': '0', 'show': true},
                 {'title': '目标设置', 'route': '/AnnualTarget', 'icon': target, 'level': '0', 'show': true},
                 {'title': '操作日志', 'route': '/systemLog', 'icon': systemLog, 'level': '0', 'show': true},
+                {'title': '谱目状态记录', 'route': '/UpdateLog', 'icon': systemLog, 'level': '0', 'show': true},
             ];
         }
     }else{

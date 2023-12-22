@@ -373,6 +373,10 @@ const lang = {
         '页, 总adj影像数': '页, 总adj影像数',
         '页影像, 总adj影像数': '页影像, 总adj影像数',
         'adj影像页': 'adj影像页',
+        '家谱索引入库谱目状态修改记录': '家谱索引入库谱目状态修改记录',
+        '谱目状态记录': '谱目状态记录',
+        '谱状态': '谱状态',
+        '操作平台': '操作平台',
     },
     'en': {
         '家谱索引': 'Genealogy index',
@@ -744,6 +748,10 @@ const lang = {
         '页, 总adj影像数': 'Page, Total adj Images ',
         '页影像, 总adj影像数': 'Page Image, Total adj Images ',
         'adj影像页': 'adj Images',
+        '家谱索引入库谱目状态修改记录': 'Genealogy Index Condition Update Log',
+        '谱目状态记录': 'Genealogy Status Log',
+        '谱状态': 'Genealogy Condition',
+        '操作平台': 'System Platform',
     }
 }
 

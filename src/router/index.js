@@ -16,6 +16,7 @@ import SLA from '../pages/SLA.vue';
 import Production from '../pages/Production.vue';
 import Metadata from '../pages/Metadata.vue';
 import SystemLog from '../pages/SystemLog.vue';
+import UpdateLog from '../pages/UpdateLog.vue';
 import AnnualTarget from '../pages/AnnualTarget.vue';
 import ImageView from '../pages/ImageView.vue';
 
@@ -34,6 +35,7 @@ const routes = [
   {path: '/metadata', component: Metadata},
   {path: '/AnnualTarget', component: AnnualTarget},
   {path: '/systemLog', component: SystemLog},
+  {path: '/UpdateLog', component: UpdateLog},
   {path: '/imageView', component: ImageView},
 ];
 

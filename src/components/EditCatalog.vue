@@ -61,7 +61,7 @@ const editData = async () => {
         'userKey': userInfo.value.userKey,
         'dataKey': catalogKey.value,
         'dataObj': form.value,
-        // 'siteKey': '',
+        'type': 'index',
     });
     loading.close();
     if(result.status == 200){
