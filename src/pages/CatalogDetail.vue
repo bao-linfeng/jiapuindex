@@ -808,7 +808,7 @@ watch(searchMore, (nv ,ov) => {
                 <el-table-column prop="Dupbookid" :label="langData['重复谱ID']" width="150" align="center" />
                 <el-table-column :label="langData['操作']" fixed="right" width="200" align="left">
                     <template #default="scope">
-                        <el-button size="small" type="primary" v-if="['1545060463', '15908066'].indexOf(userInfo.userKey) > -1" @click="handleClickAction(scope.row, 'edit')">{{langData['编辑']}}</el-button>
+                        <el-button size="small" type="primary" v-if="['1545060463', '15908066', '657446338'].indexOf(userInfo.userKey) > -1" @click="handleClickAction(scope.row, 'edit')">{{langData['编辑']}}</el-button>
                         <el-button size="small" type="primary" @click="handleClickAction(scope.row, 'lookVolume')">{{langData['查看卷册']}}</el-button>
                         <el-button v-if="scope.row.gcHasZip == 1" size="small" type="primary" @click="handleClickAction(scope.row, 'lookImage')">{{langData['查看影像']}}</el-button>
                         <el-button class="noMargin" v-if="orgMemberInfo.englishName !== 'FS' && orgMemberInfo.role <= 2 && scope.row.tarPath && scope.row.tarPath.length" size="small" type="primary" @click="handleClickAction(scope.row, 'downloadImage')">{{langData['下载影像']}}</el-button>

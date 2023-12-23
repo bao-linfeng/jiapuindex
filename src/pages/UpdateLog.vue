@@ -18,14 +18,14 @@ const gcKey = ref('');
 const allocation = ref('');
 const allocationList = ref([
     {'label': langData.value['分配进度'], 'value': ''},
-    {'label': langData.value['待分配'], 'value': '0'},
-    {'label': langData.value['已分配'], 'value': '1'},
+    {'label': langData.value['待分配'], 'value': 1},
+    {'label': langData.value['已分配'], 'value': 2},
 ]);
 const isInDetail = ref('');
 const isInDetailList = ref([
     {'label': langData.value['谱目详情'], 'value': ''},
-    {'label': langData.value['是'], 'value': '1'},
-    {'label': langData.value['否'], 'value': '0'},
+    {'label': langData.value['是'], 'value': 1},
+    {'label': langData.value['否'], 'value': 2},
 ]);
 
 const page = ref(1);
@@ -41,21 +41,19 @@ const tableData = ref([]);
 const h = ref(window.innerHeight - 140);
 
 /** 
- * 日志列表api 
+ * 家谱索引入库谱目状态修改记录列表 api 
  * @param {string} userName - 操作人员名称
  * @param {Number} page - page
  * @param {Number} limit - limit
  * @returns {Object} {msg: 提示信息，status: 状态，data: {list: 日志列表, pageNum: 分页数, total: 总条数}}
  */
  const getDataList = async () => {
-    const result = await index.getLog({
-        'userKey': userInfo.value.userKey,
-        'status': '',
-        'userName': '',
-        'orgKey': orgKey.value,
-        'logType': '',
-        'startTime': '',
-        'endTime': '',
+    const result = await index.getIndexGCConditionChangeList({
+        'gcKey': gcKey.value,
+        'genealogyName': genealogyName.value,
+        'isGCList': isInDetail.value,
+        'assignProgress': allocation.value,
+        'indexOrgKey': orgKey.value,
         'page': page.value,
         'limit': limit.value,
     });
@@ -65,6 +63,26 @@ const h = ref(window.innerHeight - 140);
             return ele;
         });
         total.value = result.result.total;
+    }else{
+        createMsg(result.msg);
+    }
+}
+
+const orgKeyList = ref('');
+const getOrgList = async () => {
+    const result = await index.getOrgList({'userKey': userInfo.value.userKey});
+    if(result.status == 200){
+        let arr = [];
+        result.data.map((ele) => {
+            ele.label = ele.orgName;
+            ele.value = ele.orgKey;
+            if(ele.orgName != 'FS'){
+                arr.push(ele);
+            }
+            return ele;
+        });
+        orgKeyList.value = arr;
+        orgKeyList.value.unshift({'label': langData.value['全部机构'], 'value': ''},);
     }else{
         createMsg(result.msg);
     }
@@ -80,6 +98,8 @@ onMounted(() => {
     }else{
         orgKey.value = orgMemberInfo.value.orgKey;
     }
+
+    getOrgList();
 
     getDataList();
 });
@@ -107,7 +127,7 @@ onMounted(() => {
                     <el-option v-for="item in allocationList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
                 <el-select v-model="orgKey" class="w150" :placeholder="langData['机构列表']">
-                    <el-option v-for="item in orgList" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option v-for="item in orgKeyList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
                 <el-button type="primary" @click="handleSearch">{{langData['检索']}}</el-button>
             </div>
@@ -118,10 +138,10 @@ onMounted(() => {
                 style="width: 100%">
                 <el-table-column prop="gcKey" :label="langData['谱ID']" align="center" width="120" />
                 <el-table-column prop="genealogyName" :label="langData['谱名']" align="center" width="120" />
-                <el-table-column prop="orgName" :label="langData['分配机构']" align="center" width="120" />
-                <el-table-column prop="isInDetail" :label="langData['谱目详情']" align="center" width="120" />
+                <el-table-column prop="indexOrgName" :label="langData['分配机构']" align="center" width="120" />
+                <el-table-column prop="isInGCList" :label="langData['谱目详情']" align="center" width="120" />
                 <el-table-column prop="condition" :label="langData['谱状态']" align="center" width="110" />
-                <el-table-column prop="type" :label="langData['操作平台']" align="center" />
+                <el-table-column prop="platform" :label="langData['操作平台']" align="center" />
                 <el-table-column prop="userName" :label="langData['操作人员']" align="center" />
                 <el-table-column prop="createTime" :label="langData['操作时间']" align="center" />
                 <el-table-column prop="log" :label="langData['操作日志']" align="center" />

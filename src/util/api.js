@@ -399,6 +399,9 @@ const index = {
   logSingleRead(param){
     return request.post('/index/logSingleRead', param);
   },
+  getIndexGCConditionChangeList(param){// 家谱索引入库谱目状态修改记录列表
+    return request.get('/index/indexGCConditionChangeList', param);
+  },
 }
 
 export {
