@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { useGlobalStore } from '../store/global.js';
 import { setValue, createMsg, formattedDate } from '../util/ADS.js';
 import { baseURL, index } from '../util/api';
+import { useTable } from '../composables/useTable.js';
 
 const router = useRouter();
 
@@ -12,96 +13,48 @@ const global = useGlobalStore();
 const { userInfo, orgMemberInfo, langData, lanType } = storeToRefs(global);
 const { orgList } = global;
 
-const orgKey = ref('');
-const genealogyName = ref('');
-const gcKey = ref('');
-const allocation = ref('');
 const allocationList = ref([
     {'label': langData.value['分配进度'], 'value': ''},
     {'label': langData.value['待分配'], 'value': 1},
     {'label': langData.value['已分配'], 'value': 2},
 ]);
-const isInDetail = ref('');
 const isInDetailList = ref([
     {'label': langData.value['谱目详情'], 'value': ''},
     {'label': langData.value['是'], 'value': 1},
     {'label': langData.value['否'], 'value': 2},
 ]);
 
-const page = ref(1);
-const limit = ref(30);
-const total = ref(0);
-const handleCurrentChange = (data) => {
-    console.log(data);
-    page.value = data;
-    getDataList();
-}
-
-const tableData = ref([]);
 const h = ref(window.innerHeight - 140);
 
-/** 
- * 家谱索引入库谱目状态修改记录列表 api 
- * @param {string} userName - 操作人员名称
- * @param {Number} page - page
- * @param {Number} limit - limit
- * @returns {Object} {msg: 提示信息，status: 状态，data: {list: 日志列表, pageNum: 分页数, total: 总条数}}
- */
- const getDataList = async () => {
-    const result = await index.getIndexGCConditionChangeList({
-        'gcKey': gcKey.value,
-        'genealogyName': genealogyName.value,
-        'isGCList': isInDetail.value,
-        'assignProgress': allocation.value,
-        'indexOrgKey': orgKey.value,
-        'page': page.value,
-        'limit': limit.value,
-    });
-    if(result.status == 200){
-        tableData.value = result.result.list.map((ele) => {
-            ele.createTime = formattedDate(ele.time);
-            return ele;
-        });
-        total.value = result.result.total;
-    }else{
-        createMsg(result.msg);
-    }
-}
+const orgKeyList = ref([]);
 
-const orgKeyList = ref('');
-const getOrgList = async () => {
-    const result = await index.getOrgList({'userKey': userInfo.value.userKey});
-    if(result.status == 200){
-        let arr = [];
-        result.data.map((ele) => {
-            ele.label = ele.orgName;
-            ele.value = ele.orgKey;
-            if(ele.orgName != 'FS'){
-                arr.push(ele);
-            }
-            return ele;
-        });
-        orgKeyList.value = arr;
-        orgKeyList.value.unshift({'label': langData.value['全部机构'], 'value': ''},);
-    }else{
-        createMsg(result.msg);
-    }
-}
+const params = ref({
+    'gcKey': '',
+    'genealogyName': '',
+    'isGCList': '',
+    'assignProgress': '',
+    'indexOrgKey': '',
+}); 
 
+// 检索
 const handleSearch = () => {
-    getDataList();
+    pagination.reset();
+    refresh(params.value);
 }
+
+const [tableData, refresh, loading, pagination] = useTable(index.getIndexGCConditionChangeList, params.value,
+    {
+        path: {
+            data: 'data',
+            total: 'total',
+            page: 'page',
+            size: 'limit'
+        },
+        immediate: true
+    });
 
 onMounted(() => {
-    if(orgMemberInfo.value.englishName == 'FS'){
-        
-    }else{
-        orgKey.value = orgMemberInfo.value.orgKey;
-    }
-
-    getOrgList();
-
-    getDataList();
+    orgKeyList.value = [{'label': langData.value['全部机构'], 'value': ''}].concat(orgList);
 });
 
 </script>
@@ -118,15 +71,15 @@ onMounted(() => {
         </header>
         <main class="main">
             <div class="search-wrap">
-                <el-input v-model="gcKey" class="w150" :placeholder="langData['谱ID']" clearable />
-                <el-input v-model="genealogyName" class="w150" :placeholder="langData['谱名']" clearable />
-                <el-select v-model="isInDetail" class="w150" :placeholder="langData['谱目详情']">
+                <el-input v-model="params.gcKey" class="w150" :placeholder="langData['谱ID']" clearable />
+                <el-input v-model="params.genealogyName" class="w150" :placeholder="langData['谱名']" clearable />
+                <el-select v-model="params.isGCList" class="w150" :placeholder="langData['谱目详情']">
                     <el-option v-for="item in isInDetailList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
-                <el-select v-model="allocation" class="w150" :placeholder="langData['分配进度']">
+                <el-select v-model="params.assignProgress" class="w150" :placeholder="langData['分配进度']">
                     <el-option v-for="item in allocationList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
-                <el-select v-model="orgKey" class="w150" :placeholder="langData['机构列表']">
+                <el-select v-model="params.indexOrgKey" class="w150" :placeholder="langData['机构列表']" clearable>
                     <el-option v-for="item in orgKeyList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
                 <el-button type="primary" @click="handleSearch">{{langData['检索']}}</el-button>
@@ -137,7 +90,7 @@ onMounted(() => {
                 :height="h"
                 style="width: 100%">
                 <el-table-column prop="gcKey" :label="langData['谱ID']" align="center" width="120" />
-                <el-table-column prop="genealogyName" :label="langData['谱名']" align="center" width="120" />
+                <el-table-column prop="genealogyName" :label="langData['谱名']" align="center" />
                 <el-table-column prop="indexOrgName" :label="langData['分配机构']" align="center" width="120" />
                 <el-table-column prop="isInGCList" :label="langData['谱目详情']" align="center" width="120" />
                 <el-table-column prop="condition" :label="langData['谱状态']" align="center" width="110" />
@@ -155,10 +108,10 @@ onMounted(() => {
                     small
                     background
                     layout="prev, pager, next, jumper, total"
-                    :current-page="page"
-                    :page-size="limit"
-                    :total="total"
-                    @current-change="handleCurrentChange"
+                    :current-page="pagination.current"
+                    :page-size="pagination.size"
+                    :total="pagination.total"
+                    @current-change="pagination.onPageChange"
                 />
             </div>
         </footer>
